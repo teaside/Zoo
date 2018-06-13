@@ -1,0 +1,6 @@
+<p>List of animals</p>
+<div *ngFor="let animal of animals">
+  <a [routerLink]="['/animal', animal._id]">
+    {{animal.name}}
+  </a>
+</div>

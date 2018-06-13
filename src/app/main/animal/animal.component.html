@@ -1,0 +1,25 @@
+<!-- 
+  {{id}}
+
+  <p *ngFor="">id: {{ animals }} </p>
+  <p>name: </p>
+  <p><input type="text" [(ngModel)]="animal[0].name"></p>
+  <p><input type="text" [(ngModel)]="animal[0].id"></p>
+  <button (click)="save()">Save</button> -->
+
+  <!-- <p>Animasl {{animals}} </p> -->
+<div *ngFor="let animal of animals">
+    <p>{{animal._id}}</p>
+    <p>{{animal.name}}</p>
+    <p>{{animal.login}}</p>
+    <p>{{animal.password}}</p>
+
+    <div>id:<input type="text" #id="ngModel" [(ngModel)]="animal._id"></div>
+    <div>name:<input type="text" #name="ngModel" [(ngModel)]="animal.name"></div>
+    <div>login:<input type="text" #login="ngModel" [(ngModel)]="animal.login"></div>
+    <div>password:<input type="text" #password="ngModel" [(ngModel)]="animal.password"></div>
+
+    <button (click)="update(id.value, name.value, login.value, password.value)">update</button>
+    <button (click)="add(id.value, name.value, login.value, password.value)">addNew</button>
+    <button (click)="delete(id.value)">delete</button>
+</div>

@@ -1,6 +1,9 @@
 <div>
-  <input type="text">
+  <input type="text" #login>
 </div>
 <div>
-  <input type="password">
+  <input type="password" #password>
+</div>
+<div>
+  <input type="submit" (click)="checkAnimal(login.value, password.value)" value="Войти">
 </div>
