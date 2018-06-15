@@ -36,10 +36,6 @@ export class AnimalComponent implements OnInit {
     .subscribe(data => console.log(data));
   }
   
-  add(id, name, login, password) {
-    this.animalService.addAnimal(new Animal(id, name, login, password))
-    .subscribe(data => console.log(data));
-  }
   delete(id) {
     this.animalService.deleteAnimal(id)
     .subscribe(data => console.log(data));

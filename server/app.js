@@ -109,12 +109,8 @@ app.route('/animals')
     })
     
   })
-  .post(ensureToken, function(req, res) {
+  .post(function(req, res) {
         try {
-            jwt.verify(req.token, 'my_secret_key', (err, data) => {
-                if (err) {
-                    res.sendStatus(403);
-                } else {
                     console.log("post animals");
                     if(typeof req.body == 'undefined') {
                         next(Error('Please enter the data'));
@@ -138,8 +134,6 @@ app.route('/animals')
                         });
                         
                     }
-                }
-            })
          
   }
   catch(err) {
