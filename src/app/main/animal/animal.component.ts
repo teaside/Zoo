@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AnimalService } from '../../shared/services/animal.service';
 
 import { Animal } from '../../shared/models/animal.model';
@@ -16,7 +16,8 @@ export class AnimalComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private animalService: AnimalService
+    private animalService: AnimalService,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -27,7 +28,6 @@ export class AnimalComponent implements OnInit {
     this.animalService.getAnimalById(this.route.snapshot.params['id'])
     .subscribe(data => {
       this.animals = JSON.parse(data['_body']);
-      console.log('animals ', this.animals);
     });
   }
 
@@ -43,6 +43,7 @@ export class AnimalComponent implements OnInit {
   delete(id) {
     this.animalService.deleteAnimal(id)
     .subscribe(data => console.log(data));
+    this.router.navigate(['/main'])
   }
 
 }

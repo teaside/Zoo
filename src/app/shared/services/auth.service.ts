@@ -2,30 +2,29 @@ import { Injectable } from '@angular/core';
 import { Animal } from '../models/animal.model';
 
 import { Http, Headers, RequestOptions } from '@angular/http';
+import { assertNotNull, isNull } from '@angular/compiler/src/output/output_ast';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private isAuthenticated = false;
-
-  login(animal: Animal) {
-    this.isAuthenticated = true;
-  }
-
   logout() {
-    this.isAuthenticated = false;
-    window.localStorage.clear();
+    sessionStorage.clear();
+  }
+  
+  login(login, token) {
+    sessionStorage.setItem('login', login);
+    sessionStorage.setItem('token', token);
+  }
+  getToken():string {
+    return sessionStorage.getItem('token');
   }
 
-  isLoggedOn(): boolean {
-    return this.isAuthenticated;
+  isLogged(): boolean {
+    return sessionStorage.getItem('token') !== null;
   }
 
-  checkUser(login, password) {
-    // return this.
-  }
 }
 
 

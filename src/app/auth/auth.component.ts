@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AnimalService } from '../shared/services/animal.service';
 import { Animal } from '../shared/models/animal.model';
 import { Jsonp } from '@angular/http';
+import { AuthService } from '../shared/services/auth.service';
 
 
 @Component({
@@ -15,34 +16,31 @@ export class AuthComponent implements OnInit {
   animals: Animal[];
   constructor(
     private animalService: AnimalService,
-  private router: Router) { }
+    private router: Router,
+    private authService: AuthService
+  ) { }
 
   ngOnInit() {
-    let asd = window.localStorage.getItem('authenticated');
-    if (asd != null)
-    {
-      this.router.navigate(['/main']);
-    }
+
   }
 
   checkAnimal(login, password) {
-    this.animalService.getAnimals()
-    .subscribe(data => {
-      this.animals = JSON.parse(data['_body']);
-      console.log('animals ', this.animals);
-    });
     try {
-      let obj = this.animals.find(o => o.login === login && o.password === password);
-      if (obj) {
-        window.localStorage.setItem('authenticated', JSON.stringify(true));
-        this.router.navigate(['/main']);
-      }
+      this.animalService.login({login: login, password: password})
+      .subscribe(data => {
+        const body = JSON.parse(data['_body']);
+        const token = body["token"];
+        if(token !== "The animal with this login isn't exist" && token !== "Wrong password") {
+          this.authService.login(login, token);
+          this.router.navigate(['/main']);
+        }
+        else {
+
+        }
+      });
     }
     catch (err) {
       console.log(err);
     }
-    
-    // console.log(false);
-    // return false
   }
 }

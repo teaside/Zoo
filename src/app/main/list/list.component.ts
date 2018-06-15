@@ -17,8 +17,6 @@ export class ListComponent implements OnInit {
     this.animalservice.getAnimals()
     .subscribe(data => {
       this.animals = JSON.parse(data['_body']);
-      console.log('animals ', this.animals);
-      // console.log(this.asd.pop());
     });
   }
 
