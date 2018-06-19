@@ -12,7 +12,7 @@ import { Animal } from '../../shared/models/animal.model';
 export class AnimalComponent implements OnInit {
 
   // id: string;
-  animals: Animal[];
+  animal: Animal = {_id:"", name: "", userId: ""};
 
   constructor(
     private route: ActivatedRoute,
@@ -25,21 +25,27 @@ export class AnimalComponent implements OnInit {
   }
 
   getAnimal() {
-    this.animalService.getAnimalById(this.route.snapshot.params['id'])
+    this.animalService.getAnimalByName(this.route.snapshot.params.name)
     .subscribe(data => {
-      this.animals = JSON.parse(data['_body']);
+      this.animal = JSON.parse(data['_body']);
+      console.log("gotten animals: ",this.animal);
     });
   }
 
-  update(id, name, login, password) {
-    this.animalService.updateAnimal(new Animal(id, name, login, password))
-    .subscribe(data => console.log(data));
+  update(id, name) {
+    this.animalService.updateAnimal(id, name)
+    .subscribe(data => {
+      console.log(data);
+      this.router.navigate(['/main'])
+    });
   }
   
   delete(id) {
     this.animalService.deleteAnimal(id)
-    .subscribe(data => console.log(data));
-    this.router.navigate(['/main'])
+    .subscribe(data => {
+      console.log(data);
+      this.router.navigate(['/main'])
+    });
   }
 
 }

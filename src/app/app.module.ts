@@ -11,11 +11,14 @@ import { AnimalComponent } from './main/animal/animal.component';
 import { CommonModule } from '@angular/common';
 import { MainModule } from './main/main.module';
 import { FormsModule } from '@angular/forms';
-import { AddAnimalComponent } from './add-animal/add-animal.component';
+import { AddUserComponent } from './add-user/add-user.component';
+import { AddAnimalComponent } from './main/add-animal/add-animal.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     AuthComponent,
+    AddUserComponent,
     AddAnimalComponent,
   ],
   imports: [

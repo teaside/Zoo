@@ -1,0 +1,15 @@
+    <form>
+            <div class="form-group">
+              <label for="login">Login:
+              <input type="text" #login id="login" class="form-control" placeholder="Login" required autofocus>
+            </label>
+            </div>
+            <div class="form-group">
+              <label for="password">Password:
+              <input type="password" #password id="password" class="form-control" placeholder="Password" required>
+            </label>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-primary btn-block" type="submit" (click)="addAnimal(login.value, password.value)">Add user</button>
+            </div>
+    </form>  

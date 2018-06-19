@@ -1,14 +1,16 @@
-<div *ngFor="let animal of animals">
-    <div>{{animal._id}}</div>
-    <div>{{animal.name}}</div>
-    <div>{{animal.login}}</div>
-    <div>{{animal.divassword}}</div>
 
-    <div>id:<input type="text" #id="ngModel" [(ngModel)]="animal._id"></div>
-    <div>name:<input type="text" #name="ngModel" [(ngModel)]="animal.name"></div>
-    <div>login:<input type="text" #login="ngModel" [(ngModel)]="animal.login"></div>
-    <div>password:<input type="text" #password="ngModel" [(ngModel)]="animal.password"></div>
-
-    <button (click)="update(id.value, name.value, login.value, password.value)">update</button>
-    <button (click)="delete(id.value)">delete</button>
-</div>
+    <h1>{{animal.name}}</h1>
+    <div class="form-group">
+        <label for="name">userId:
+            <input type="text" class="form-control" #id readonly [(ngModel)]="animal._id"  autofocus>
+        </label>
+    
+    <div class="form-group">
+    <label for="name">userId:
+            <input type="text" class="form-control" #name [(ngModel)]="animal.name" required>
+        </label>
+    </div>
+    <!-- <div class="btn-group" role="group"> -->
+            <button type="button" class="btn btn-warning" (click)="update(id.value, name.value)">Update</button>
+            <button type="button" class="btn btn-danger float-right" (click)="delete(id.value)">Delete</button>
+          <!-- </div> -->

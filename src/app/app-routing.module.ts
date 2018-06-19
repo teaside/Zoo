@@ -6,15 +6,18 @@ import { MainComponent } from './main/main.component';
 import { ListComponent } from './main/list/list.component';
 import { AnimalComponent } from './main/animal/animal.component';
 import { AuthGuardGuard } from './auth-guard.guard';
-import { AddAnimalComponent } from './add-animal/add-animal.component';
+import { AddUserComponent } from './add-user/add-user.component';
+import { AddAnimalComponent } from './main/add-animal/add-animal.component';
+
 
 const routes: Routes = [
   { path: '', redirectTo: '/auth', pathMatch: 'full' },
+  { path: 'addUser', component: AddUserComponent},
   { path: 'addAnimal', component: AddAnimalComponent},
   { path: 'auth', component: AuthComponent},
   { path: 'main', component: MainComponent, canActivate: [AuthGuardGuard]},
   { path: 'list', component: ListComponent, canActivate: [AuthGuardGuard]},
-  { path: 'animal/:id', component: AnimalComponent, canActivate: [AuthGuardGuard]}
+  { path: 'animal/:name', component: AnimalComponent, canActivate: [AuthGuardGuard]}
   ];
 
 @NgModule({

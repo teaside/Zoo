@@ -5,7 +5,7 @@ var mongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var cors = require('cors')
 var jwt = require('jsonwebtoken');
-
+const {ObjectId} = require('mongodb');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false })); 
@@ -44,14 +44,15 @@ app.post('/login', (req, res) => {
                 assert.equal(null, err);
                 const db = client.db('pets');
 
-                db.collection('animals').find({login: login}).toArray( function (err, result) {
+                db.collection('users').find({login: login}).toArray( function (err, result) {
                     if(result.length > 0) {
 
-                        db.collection('animals').find({login: login, password: password}).toArray( function(err, pasresult) {
+                        db.collection('users').find({login: login, password: password}).toArray( function(err, pasresult) {
                             if(pasresult.length > 0) {
+                                console.log(pasresult);
                                 const token = jwt.sign({pasresult}, 'my_secret_key');
                                 console.log('token ', token);
-                                res.json({token: token});
+                                res.json({token: token, userId: result[0]._id});
                             }
                             else {
                                 res.json({token: "Wrong password"});
@@ -59,7 +60,7 @@ app.post('/login', (req, res) => {
                         });
                     }
                     else {
-                        res.json({token: "The animal with this login isn't exist"});
+                        res.json({token: "The user with this login isn't exist"});
                     }
                 });
             });
@@ -84,7 +85,7 @@ app.get('/', ensureToken, function  (req, res) {
     })
 });
 
-app.route('/animals')
+app.route('/user')
   .get(ensureToken, (req, res) => {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
         if (err) {
@@ -93,12 +94,12 @@ app.route('/animals')
 
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
                 assert.equal(null, err);
-                console.log('getting animals')
+                console.log('getting users')
                 const db = client.db('pets');
         
-                db.collection("animals").find().toArray(function(err, results) {
+                db.collection("users").find().toArray(function(err, results) {
                     if (err) {
-                        res.json({'animals': "db don't has animals "});
+                        res.json({'users': "db don't has users "});
                     } else {
                         res.json(results);
                     }
@@ -111,6 +112,67 @@ app.route('/animals')
   })
   .post(function(req, res) {
         try {
+            console.log("post user");
+            if(typeof req.body == 'undefined') {
+                next(Error('Please enter the data'));
+            }
+            else {
+                mongoClient.connect('mongodb://localhost:27017', function(err, client) {
+                    assert.equal(null, err);
+                    const db = client.db('pets');
+                    db.collection('users').insertOne(
+                        { 
+                            'login': req.body.login,
+                            'password': req.body.password,
+                            'animals': []
+                    },
+                    function (err, r) {
+                        assert.equal(null, err);
+                        res.send("Document inserted with _id: " + r.insertedId);
+                    }
+                    );
+                });
+                
+            }
+         
+  }
+  catch(err) {
+      console.log(err);
+  }
+  })
+
+
+app.route('/:userId/animals')
+  .get(ensureToken, (req, res) => {
+    console.log('getting animals for user');
+    jwt.verify(req.token, 'my_secret_key', (err, data) => {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+
+            mongoClient.connect('mongodb://localhost:27017', function(err, client) {
+                assert.equal(null, err);
+                
+                // console.log(req.params.login);
+                const db = client.db('pets');
+        
+                db.collection("animals").find({userId: req.params.userId}).toArray(function(err, results) {
+                    if (err) {
+                        res.json([{'animals': "db don't has animals "}]);
+                    } else {
+                        console.log(results);
+                        res.json(results);
+                    }
+                  });
+            });
+            
+        }
+    })
+    
+  })
+  .post(function(req, res) {
+    console.log("req.body.name",req.body);
+        try {
                     console.log("post animals");
                     if(typeof req.body == 'undefined') {
                         next(Error('Please enter the data'));
@@ -121,10 +183,8 @@ app.route('/animals')
                             const db = client.db('pets');
                             db.collection('animals').insertOne(
                                 { 
-                                    '_id': req.body.id,
                                     'name': req.body.name,
-                                    'login': req.body.login,
-                                    'password': req.body.password,
+                                    'userId': req.params.userId
                             },
                             function (err, r) {
                                 assert.equal(null, err);
@@ -132,7 +192,6 @@ app.route('/animals')
                             }
                             );
                         });
-                        
                     }
          
   }
@@ -142,36 +201,35 @@ app.route('/animals')
   })
 
 
-app.route('/animals/:id')
+app.route('/animals/:name')
     .get(ensureToken, (req, res) => {
         jwt.verify(req.token, 'my_secret_key', (err, data) => {
             if (err) {
                 res.sendStatus(403);
             } else {
-         mongoClient.connect('mongodb://localhost:27017', function(err, client) {
-            assert.equal(null, err);
-    
-            const db = client.db('pets');
-    
-            db.collection("animals").find({'_id' : req.params.id}).toArray(function(err, results) {
-                if (err) {
-                } else {
-                    console.log("aniamal by id ", results);
-                    res.json(results);
-                }
-              });
-        });
-        
+                mongoClient.connect('mongodb://localhost:27017', function(err, client) {
+                    assert.equal(null, err);
+                console.log(req.params.name);
+                    const db = client.db('pets');          
+                    db.collection("animals").find({name: req.params.name}).toArray(function(err, results) {
+                        if (err) {
+                        } else {
+                            console.log(results[0]);
+                            res.json(results[0]);
+                        }
+                    });
+                });
             }
         })
-       
     })
+
     .put(ensureToken, (req, res) => {
-        try{
+        try {
             jwt.verify(req.token, 'my_secret_key', (err, data) => {
                 if (err) {
                     res.sendStatus(403);
-                } else {
+                } 
+                else {
                     if(typeof req.body == 'undefined') {
                         next(Error('Please enter the data'));
                     }
@@ -179,20 +237,25 @@ app.route('/animals/:id')
                     mongoClient.connect('mongodb://localhost:27017', function(err, client) {
                         assert.equal(null, err);
                         console.log('Connected to mongodb')
-                
+                        // console.log(req.body._id);
                         const db = client.db('pets');
                         db.collection("animals").updateOne(
-                            {_id: req.body.id}, 
+                            { _id: ObjectId(req.body._id)},
                             { $set: 
+                                { name: req.body.name }
+                            }, function(err, result){   
+                                if(err != null)
                                 {
-                                    name: req.body.name, 
-                                    login: req.body.login,
-                                    password: req.body.password
-                                }
-                            }, function(err, result){      
+                                    console.log(err);
+                                    res.status(500);
+                                }   
+                                else {
                                     console.log(result);
                                     res.json(result);
                                 }
+                                
+                            }
+
                         )
                     });
                     
@@ -220,11 +283,18 @@ app.route('/animals/:id')
                         assert.equal(null, err);
                         const db = client.db('pets');
                         db.collection("animals").deleteOne(
-                            {_id: req.params.id}, 
-                            function(err, result){      
+                            {_id: ObjectId(req.params.name)}, 
+                            function(err, result){  
+                                if(err != null)
+                                {
+                                    console.log(err);
+                                    res.status(500);
+                                }   
+                                else {
                                     console.log(result.result);
                                     res.json(result);
-                                }
+                                }    
+                            }
                         )
                     });
                     

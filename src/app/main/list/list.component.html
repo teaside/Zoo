@@ -1,6 +1,6 @@
-<p>List of animals</p>
-<div *ngFor="let animal of animals">
-  <a [routerLink]="['/animal', animal._id]">
+<h1>List of animals</h1>
+<ul *ngFor="let animal of animals" class="list-group">
+  <a class="list-group-item" [routerLink]="['/animal', animal.name]">
     {{animal.name}}
   </a>
-</div>
+</ul>

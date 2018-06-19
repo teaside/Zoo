@@ -24,14 +24,16 @@ export class AuthComponent implements OnInit {
 
   }
 
-  checkAnimal(login, password) {
+  checkUser(login, password) {
     try {
       this.animalService.login({login: login, password: password})
       .subscribe(data => {
         const body = JSON.parse(data['_body']);
         const token = body["token"];
-        if(token !== "The animal with this login isn't exist" && token !== "Wrong password") {
-          this.authService.login(login, token);
+        const userId = body["userId"];
+        console.log("userId", userId);
+        if(token !== "The user with this login isn't exist" && token !== "Wrong password") {
+          this.authService.login(login, userId, token);
           this.router.navigate(['/main']);
         }
         else {

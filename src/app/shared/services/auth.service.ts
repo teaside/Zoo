@@ -13,12 +13,19 @@ export class AuthService {
     sessionStorage.clear();
   }
   
-  login(login, token) {
+  login(login, userId, token) {
     sessionStorage.setItem('login', login);
+    sessionStorage.setItem('userId', userId);
     sessionStorage.setItem('token', token);
+  }
+  getLogin():string{
+    return sessionStorage.getItem('login');
   }
   getToken():string {
     return sessionStorage.getItem('token');
+  }
+  getuserId():string {
+    return sessionStorage.getItem('userId');
   }
 
   isLogged(): boolean {

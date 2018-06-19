@@ -14,6 +14,9 @@ export class ListComponent implements OnInit {
   constructor(private animalservice: AnimalService) { }
 
   ngOnInit() {
+    this.getAnimals();
+  }
+  getAnimals() {
     this.animalservice.getAnimals()
     .subscribe(data => {
       this.animals = JSON.parse(data['_body']);
