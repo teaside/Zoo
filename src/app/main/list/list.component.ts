@@ -8,9 +8,8 @@ import { Animal } from '../../shared/models/animal.model';
   styleUrls: ['./list.component.css']
 })
 export class ListComponent implements OnInit {
-  asd: any;
   animals: Animal[];
-  
+  show:boolean = false;
   constructor(private animalservice: AnimalService) { }
 
   ngOnInit() {
@@ -20,6 +19,7 @@ export class ListComponent implements OnInit {
     this.animalservice.getAnimals()
     .subscribe(data => {
       this.animals = JSON.parse(data['_body']);
+      this.show = this.animals.length > 0 ? true : false; 
     });
   }
 

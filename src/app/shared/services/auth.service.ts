@@ -3,14 +3,20 @@ import { Animal } from '../models/animal.model';
 
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { assertNotNull, isNull } from '@angular/compiler/src/output/output_ast';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
+  constructor(
+    private router: Router
+  ) {}
+
   logout() {
     sessionStorage.clear();
+    this.router.navigate(['/auth']);
   }
   
   login(login, userId, token) {

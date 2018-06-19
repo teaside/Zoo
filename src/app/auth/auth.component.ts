@@ -13,6 +13,7 @@ import { AuthService } from '../shared/services/auth.service';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
+  error = '';
   animals: Animal[];
   constructor(
     private animalService: AnimalService,
@@ -37,7 +38,12 @@ export class AuthComponent implements OnInit {
           this.router.navigate(['/main']);
         }
         else {
-
+          if (token == "The user with this login isn't exist") {
+            this.error = token;
+          }
+          else if (token == "Wrong password") {
+            this.error = token;
+          }
         }
       });
     }
