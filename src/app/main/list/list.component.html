@@ -1,9 +1,18 @@
-<h1>List of animals</h1>
-<ul *ngFor="let animal of animals" class="list-group">
-  <a class="list-group-item" [routerLink]="['/animal', animal.name]">
-    {{animal.name}}
-  </a>
+<input type="text" class="form-control mb-3" [(ngModel)]="search" placeholder="Search...">
+
+<ul *ngFor="let animal of animals | search:search" class="list-group">
+  <div class="list-group-item">
+      <a class="mt-4" [routerLink]="['/animal', animal._id]">
+        {{animal.name}}
+      </a>
+      <button type="button" class="btn btn-danger float-right" (click)="delete(animal._id)">Delete</button>
+  </div>
 </ul>
-<div *ngIf="!show">
+<div *ngIf="show">
   <span class="text-danger">You have no animals</span>
 </div>
+<div>
+    <img *ngIf="preloader" class="custom_size" src="../assets/preloader.gif">
+</div>
+
+

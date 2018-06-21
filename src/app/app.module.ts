@@ -10,16 +10,19 @@ import { ListComponent } from './main/list/list.component';
 import { AnimalComponent } from './main/animal/animal.component';
 import { CommonModule } from '@angular/common';
 import { MainModule } from './main/main.module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AddUserComponent } from './add-user/add-user.component';
 import { AddAnimalComponent } from './main/add-animal/add-animal.component';
 
+import { NgProgressModule } from '@ngx-progressbar/core';
+import { NgProgressHttpModule } from '@ngx-progressbar/http';
+// import { SearchPipe } from './shared/pipes/search.pipe';
 @NgModule({
   declarations: [
     AppComponent,
     AuthComponent,
     AddUserComponent,
-    AddAnimalComponent,
+    AddAnimalComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +30,8 @@ import { AddAnimalComponent } from './main/add-animal/add-animal.component';
     HttpModule,
     CommonModule,
     MainModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

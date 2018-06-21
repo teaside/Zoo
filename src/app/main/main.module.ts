@@ -7,6 +7,10 @@ import { MainComponent } from './main.component';
 import { AppRoutingModule } from '../app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { SearchPipe } from '../shared/pipes/search.pipe';
+
+
+
 
 @NgModule({
   imports: [
@@ -17,6 +21,7 @@ import { RouterModule } from '@angular/router';
   declarations: [
     MainComponent,
     ListComponent,
-    AnimalComponent]
+    AnimalComponent,
+    SearchPipe]
 })
 export class MainModule { }

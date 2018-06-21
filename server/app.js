@@ -85,13 +85,32 @@ app.get('/', ensureToken, function  (req, res) {
     })
 });
 
+app.get('/email/:email', function  (req, res) {
+    mongoClient.connect('mongodb://localhost:27017', function(err, client) {
+        assert.equal(null, err);
+        console.log('checking email')
+        const db = client.db('pets');
+
+        db.collection("users").find({email: req.params.email}).toArray(function(err, results) {
+            if (err) {
+                console.log(err);
+                res.json({'users': ""});
+            } else {
+                console.log(results.length);
+                if(results.length>0)
+                    res.json(true)
+                else res.json(false);
+            }
+          });
+    });
+});
+
 app.route('/user')
   .get(ensureToken, (req, res) => {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
         if (err) {
             res.sendStatus(403);
         } else {
-
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
                 assert.equal(null, err);
                 console.log('getting users')
@@ -122,7 +141,8 @@ app.route('/user')
                     const db = client.db('pets');
                     db.collection('users').insertOne(
                         { 
-                            'login': req.body.login,
+                            'email': req.body.login,
+                            'name': req.body.name,
                             'password': req.body.password,
                             'animals': []
                     },
@@ -201,7 +221,29 @@ app.route('/:userId/animals')
   })
 
 
-app.route('/animals/:name')
+  app.get('/animal/:id/:userId', ensureToken, function  (req, res) {
+    jwt.verify(req.token, 'my_secret_key', (err, data) => {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            mongoClient.connect('mongodb://localhost:27017', function(err, client) {
+                assert.equal(null, err);
+            console.log("animal id ", req.params.id);
+            console.log("user id ", req.params.userId);
+                const db = client.db('pets');          
+                db.collection("animals").find({_id: ObjectId(req.params.id), userId: req.params.userId}).toArray(function(err, results) {
+                    if (err) {
+                    } else {
+                        console.log(results[0]);
+                        res.json(results[0]);
+                    }
+                });
+            });
+        }
+    })
+});
+
+app.route('/animals/:id')
     .get(ensureToken, (req, res) => {
         jwt.verify(req.token, 'my_secret_key', (err, data) => {
             if (err) {
@@ -209,9 +251,9 @@ app.route('/animals/:name')
             } else {
                 mongoClient.connect('mongodb://localhost:27017', function(err, client) {
                     assert.equal(null, err);
-                console.log(req.params.name);
+                console.log(req.params.id);
                     const db = client.db('pets');          
-                    db.collection("animals").find({name: req.params.name}).toArray(function(err, results) {
+                    db.collection("animals").find({_id: ObjectId(req.params.id)}).toArray(function(err, results) {
                         if (err) {
                         } else {
                             console.log(results[0]);
@@ -240,7 +282,7 @@ app.route('/animals/:name')
                         // console.log(req.body._id);
                         const db = client.db('pets');
                         db.collection("animals").updateOne(
-                            { _id: ObjectId(req.body._id)},
+                            { _id: ObjectId(req.params.id)},
                             { $set: 
                                 { name: req.body.name }
                             }, function(err, result){   
@@ -283,7 +325,7 @@ app.route('/animals/:name')
                         assert.equal(null, err);
                         const db = client.db('pets');
                         db.collection("animals").deleteOne(
-                            {_id: ObjectId(req.params.name)}, 
+                            {_id: ObjectId(req.params.id)}, 
                             function(err, result){  
                                 if(err != null)
                                 {

@@ -11,13 +11,14 @@ import { AddAnimalComponent } from './main/add-animal/add-animal.component';
 
 
 const routes: Routes = [
-  { path: '', redirectTo: '/auth', pathMatch: 'full' },
+  { path: '', redirectTo: 'auth', pathMatch: 'full' },
   { path: 'addUser', component: AddUserComponent},
-  { path: 'addAnimal', component: AddAnimalComponent},
+  { path: 'addAnimal', component: AddAnimalComponent, canActivate: [AuthGuardGuard]},
   { path: 'auth', component: AuthComponent},
   { path: 'main', component: MainComponent, canActivate: [AuthGuardGuard]},
   { path: 'list', component: ListComponent, canActivate: [AuthGuardGuard]},
-  { path: 'animal/:name', component: AnimalComponent, canActivate: [AuthGuardGuard]}
+  { path: 'animal/:id', component: AnimalComponent, canActivate: [AuthGuardGuard]},
+  { path: '**', redirectTo: 'main' },
   ];
 
 @NgModule({

@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+
 import { AnimalService } from '../shared/services/animal.service';
 import { Animal } from '../shared/models/animal.model';
-import { Jsonp } from '@angular/http';
+
 import { AuthService } from '../shared/services/auth.service';
+import { UserService } from '../shared/services/user.service';
 
 
 @Component({
@@ -13,10 +16,13 @@ import { AuthService } from '../shared/services/auth.service';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent implements OnInit {
+
   error = '';
   animals: Animal[];
+  form: FormGroup;
+
   constructor(
-    private animalService: AnimalService,
+    private userService: UserService,
     private router: Router,
     private authService: AuthService
   ) { }
@@ -27,7 +33,7 @@ export class AuthComponent implements OnInit {
 
   checkUser(login, password) {
     try {
-      this.animalService.login({login: login, password: password})
+      this.userService.login({login: login, password: password})
       .subscribe(data => {
         const body = JSON.parse(data['_body']);
         const token = body["token"];

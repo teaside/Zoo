@@ -19,29 +19,6 @@ export class AnimalService implements OnInit {
 
   }
 
-
-  createUser(login) {
-    try{
-      let header = new Headers();
-      header.append('Content-Type', 'application/json');
-      return this.http.post(`${environment.apiUrl}/user`, JSON.stringify(login), new RequestOptions({headers: header}));
-    }
-    catch(err) {
-      console.log('err: ', err);
-    }
-  }
-
-  login(login) {
-    try{
-      let header = new Headers();
-      header.append('Content-Type', 'application/json');
-      return this.http.post(`${environment.apiUrl}/login`, JSON.stringify(login), new RequestOptions({headers: header}));
-    }
-    catch(err) {
-      console.log('err: ', err);
-    }
-  }
-
   getAnimals() {
     try{
       let header = new Headers();
@@ -56,13 +33,14 @@ export class AnimalService implements OnInit {
   }
   
 
-  getAnimalByName (name: string) {
+  getAnimalById (id: string) {
+    console.log('getAnimalById ', id);
     try{
       let header = new Headers();
       header.append('Content-Type', 'application/json');
       header.append("Authorization", "Bearer " + this.authService.getToken());
       let requestOptions = new RequestOptions({headers: header, params: new URLSearchParams} );
-      return this.http.get(`${environment.apiUrl}/animals/${name}`, requestOptions);
+      return this.http.get(`${environment.apiUrl}/animal/${id}/${this.authService.getuserId()}`, requestOptions);
     }
     catch(err) {
       console.log('err: ', err);
