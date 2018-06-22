@@ -1,6 +1,7 @@
 <button class="btn btn-lg btn-danger float-left" (click)="back()"> &lt; </button>
 <div class="clearfix"></div>
- <form [formGroup]="form">
+<img *ngIf="preloader" class="custom_size" src="../../assets/preloader.gif">
+ <form *ngIf="!preloader" [formGroup]="form">
             <div class="form-group">
               <label>Email:
                 <div *ngIf="form.controls.email.errors">
@@ -39,4 +40,5 @@
             <div class="form-group">
                 <button [disabled]="form.controls.email.errors || form.controls.name.errors || form.controls.password1.errors || form.controls.password2.errors" class="btn btn-lg btn-primary btn-block" type="submit" (click)="addUser(form)">Add user</button>
             </div>
-    </form>  
+</form>
+    

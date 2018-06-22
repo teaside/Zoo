@@ -4,6 +4,7 @@ import { AnimalService } from '../shared/services/animal.service';
 import { Animal } from '../shared/models/animal.model';
 import { UserService } from '../shared/services/user.service';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-user',
@@ -17,8 +18,10 @@ export class AddUserComponent implements OnInit {
   form: FormGroup;
   passwordLength:number = 6;
 
+  preloader = false;
 
   constructor(
+    private router: Router,
     private userService: UserService,
     private fb: FormBuilder,
     private location: Location ) {
@@ -39,15 +42,20 @@ export class AddUserComponent implements OnInit {
     window['aaa'] = this;
   }
 
-  addUser(form: FormGroup,) {
-    if(this.form.valid){
-      console.log('+');
-      // this.userService.createUser({
-      //   email: form.controls.email.value,
-      //   name: form.controls.name.value,
-      //   password: form.controls.password1.value}
-      // )
-      // .subscribe(data => console.log(data));
+  addUser(form: FormGroup) {
+    if(this.form.valid) {
+      // console.log('+');
+      this.preloader = true;
+      this.userService.createUser({
+        email: form.controls.email.value,
+        name: form.controls.name.value,
+        password: form.controls.password1.value}
+      )
+      .subscribe(data => {
+        console.log(data);
+        this.preloader = false;
+        this.router.navigate(['/auth']);
+      });
     }
     else {
       

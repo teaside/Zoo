@@ -31,16 +31,16 @@ export class AuthComponent implements OnInit {
 
   }
 
-  checkUser(login, password) {
+  checkUser(email, password) {
     try {
-      this.userService.login({login: login, password: password})
+      this.userService.login({email: email, password: password})
       .subscribe(data => {
         const body = JSON.parse(data['_body']);
         const token = body["token"];
         const userId = body["userId"];
         console.log("userId", userId);
         if(token !== "The user with this login isn't exist" && token !== "Wrong password") {
-          this.authService.login(login, userId, token);
+          this.authService.login(email, userId, token);//adding to session
           this.router.navigate(['/main']);
         }
         else {

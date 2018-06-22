@@ -37,17 +37,14 @@ app.post('/login', (req, res) => {
         }
         else {
             console.log('auth....');
-            const login = req.body.login;
-            const password = req.body.password;
-
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
                 assert.equal(null, err);
                 const db = client.db('pets');
 
-                db.collection('users').find({login: login}).toArray( function (err, result) {
+                db.collection('users').find({email: req.body.email}).toArray( function (err, result) {
                     if(result.length > 0) {
 
-                        db.collection('users').find({login: login, password: password}).toArray( function(err, pasresult) {
+                        db.collection('users').find({email: req.body.email, password: req.body.password}).toArray( function(err, pasresult) {
                             if(pasresult.length > 0) {
                                 console.log(pasresult);
                                 const token = jwt.sign({pasresult}, 'my_secret_key');
@@ -141,7 +138,7 @@ app.route('/user')
                     const db = client.db('pets');
                     db.collection('users').insertOne(
                         { 
-                            'email': req.body.login,
+                            'email': req.body.email,
                             'name': req.body.name,
                             'password': req.body.password,
                             'animals': []

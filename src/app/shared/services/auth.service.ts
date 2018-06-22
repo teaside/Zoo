@@ -19,13 +19,13 @@ export class AuthService {
     this.router.navigate(['/auth']);
   }
   
-  login(login, userId, token) {
-    sessionStorage.setItem('login', login);
+  login(email, userId, token) {
+    sessionStorage.setItem('email', email);
     sessionStorage.setItem('userId', userId);
     sessionStorage.setItem('token', token);
   }
-  getLogin():string{
-    return sessionStorage.getItem('login');
+  getEmail():string{
+    return sessionStorage.getItem('email');
   }
   getToken():string {
     return sessionStorage.getItem('token');

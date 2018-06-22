@@ -13,6 +13,7 @@ export class UserService {
     try{
       let header = new Headers();
       header.append('Content-Type', 'application/json');
+      console.log('user.email',user.email);
       return this.http.post(`${environment.apiUrl}/user`, JSON.stringify(user), new RequestOptions({headers: header}));
     }
     catch(err) {
