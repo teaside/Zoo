@@ -31,7 +31,6 @@ function ensureToken(req, res, next) {
 }
 
 app.post('/login', (req, res) => {
-    try {
         if(typeof req.body == 'undefined') {
             next(Error('Please enter the data'));
         }
@@ -64,10 +63,7 @@ app.post('/login', (req, res) => {
             
         }
     }
-catch(err) {
-  console.log(err);
-}
-});
+);
 
 app.get('/', ensureToken, function  (req, res) {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
@@ -124,10 +120,8 @@ app.route('/user')
             
         }
     })
-    
   })
   .post(function(req, res) {
-        try {
             console.log("post user");
             if(typeof req.body == 'undefined') {
                 next(Error('Please enter the data'));
@@ -152,10 +146,7 @@ app.route('/user')
                 
             }
          
-  }
-  catch(err) {
-      console.log(err);
-  }
+
   })
 
 
@@ -166,7 +157,6 @@ app.route('/:userId/animals')
         if (err) {
             res.sendStatus(403);
         } else {
-
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
                 assert.equal(null, err);
                 
@@ -185,11 +175,9 @@ app.route('/:userId/animals')
             
         }
     })
-    
   })
   .post(function(req, res) {
     console.log("req.body.name",req.body);
-        try {
                     console.log("post animals");
                     if(typeof req.body == 'undefined') {
                         next(Error('Please enter the data'));
@@ -210,13 +198,7 @@ app.route('/:userId/animals')
                             );
                         });
                     }
-         
-  }
-  catch(err) {
-      console.log(err);
-  }
   })
-
 
   app.get('/animal/:id/:userId', ensureToken, function  (req, res) {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
@@ -263,7 +245,6 @@ app.route('/animals/:id')
     })
 
     .put(ensureToken, (req, res) => {
-        try {
             jwt.verify(req.token, 'my_secret_key', (err, data) => {
                 if (err) {
                     res.sendStatus(403);
@@ -292,22 +273,14 @@ app.route('/animals/:id')
                                     console.log(result);
                                     res.json(result);
                                 }
-                                
                             }
-
                         )
                     });
-                    
                 }
             })
-            
         }
-        catch(err) {
-            console.log(err);
-        }
-    })
+    )
     .delete(ensureToken, (req, res) => {
-        try{
             jwt.verify(req.token, 'my_secret_key', (err, data) => {
                 if (err) {
                     res.sendStatus(403);
@@ -336,17 +309,45 @@ app.route('/animals/:id')
                             }
                         )
                     });
-                    
                 }
             })
             
         }
-        catch(err) {
-            console.log(err);
-        }
-    })
+    )
     
+    app.get('/animalsSearch/:substr/:userId', ensureToken, (req, res) => {
+      jwt.verify(req.token, 'my_secret_key', (err, data) => {
+          if (err) {
+              res.sendStatus(403);
+          } else {
+              mongoClient.connect('mongodb://localhost:27017', function(err, client) {
+                  assert.equal(null, err);
+                  console.log('searching...')
+                  const db = client.db('pets');
+                  const col =  db.collection("animals");
 
+                  let query = {userId: req.params.userId};
+                  console.log(Date.now);
+                  console.log('query1', req.params.substr);
+                  if(req.params.substr != ''){
+                      console.log('pew');
+                    query = {name: new RegExp(req.params.substr, 'i'), userId: req.params.userId};
+                  }
+                  console.log('query2', req.params.substr);
+                console.log(query);
+                col.find(query).toArray(function(err, results) {
+                    if (err) {
+                        res.json({'users': "db don't has users "});
+                    } else {
+                        console.log(results);
+                        res.json(results);
+                    }
+                    });
+              });
+              
+          }
+      })
+    })
 
 app.use(errorHandler);
 

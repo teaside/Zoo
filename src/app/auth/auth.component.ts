@@ -41,7 +41,7 @@ export class AuthComponent implements OnInit {
         console.log("userId", userId);
         if(token !== "The user with this login isn't exist" && token !== "Wrong password") {
           this.authService.login(email, userId, token);//adding to session
-          this.router.navigate(['/main']);
+          this.router.navigate(['/system']);
         }
         else {
           if (token == "The user with this login isn't exist") {

@@ -8,6 +8,8 @@ import { AppRoutingModule } from '../app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SearchPipe } from '../shared/pipes/search.pipe';
+import { MainRoutingModule } from './main-routing.module';
+import { AddAnimalComponent } from './add-animal/add-animal.component';
 
 
 
@@ -16,12 +18,17 @@ import { SearchPipe } from '../shared/pipes/search.pipe';
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    MainRoutingModule
   ],
   declarations: [
     MainComponent,
     ListComponent,
     AnimalComponent,
-    SearchPipe]
+    SearchPipe,
+    AddAnimalComponent,
+    ListComponent,
+    AnimalComponent
+  ]
 })
 export class MainModule { }

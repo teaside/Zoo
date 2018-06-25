@@ -16,13 +16,16 @@ import { AddAnimalComponent } from './main/add-animal/add-animal.component';
 
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { NgProgressHttpModule } from '@ngx-progressbar/http';
+import { MainRoutingModule } from './main/main-routing.module';
+import { DebounceDirective } from './shared/directives/debounce.directive';
 // import { SearchPipe } from './shared/pipes/search.pipe';
 @NgModule({
   declarations: [
+    DebounceDirective,
     AppComponent,
     AuthComponent,
     AddUserComponent,
-    AddAnimalComponent
+    // AddAnimalComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +34,8 @@ import { NgProgressHttpModule } from '@ngx-progressbar/http';
     CommonModule,
     MainModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MainRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

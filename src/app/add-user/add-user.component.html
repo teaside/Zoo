@@ -2,43 +2,43 @@
 <div class="clearfix"></div>
 <img *ngIf="preloader" class="custom_size" src="../../assets/preloader.gif">
  <form *ngIf="!preloader" [formGroup]="form">
-            <div class="form-group">
-              <label>Email:
-                <div *ngIf="form.controls.email.errors">
-                  <span *ngIf="form.controls.email.errors.forbidden" class="badge badge-danger">User with this email is already registered</span>
-                  <span *ngIf="form.controls.email.errors.email" class="badge badge-danger">Incorrect email</span>
-                  <span *ngIf="form.controls.email.errors.required && form.controls.email.dirty === true" class="badge badge-danger">Email - required field</span>
-                </div>
-              <input type="email" formControlName="email" class="form-control" placeholder="Login" required autofocus>
-              </label>
+    <div class="form-group">
+        <label>Email:
+        <div *ngIf="form.controls.email.errors">
+            <span *ngIf="form.controls.email.errors.forbidden" class="badge badge-danger">User with this email is already registered</span>
+            <span *ngIf="form.controls.email.errors.email" class="badge badge-danger">Incorrect email</span>
+            <span *ngIf="form.controls.email.errors.required && form.controls.email.dirty === true" class="badge badge-danger">Email - required field</span>
+        </div>
+        <input type="email" formControlName="email" class="form-control" placeholder="Login" required autofocus>
+        </label>
+    </div>
+    <div class="form-group">
+        <label>Name:
+            <div *ngIf="form.controls.name.errors">
+                <span *ngIf="form.controls.name.errors.required && form.controls.name.dirty === true" class="badge badge-danger">Name - required field</span>
             </div>
-            <div class="form-group">
-                <label>Name:
-                    <div *ngIf="form.controls.name.errors">
-                        <span *ngIf="form.controls.name.errors.required && form.controls.name.dirty === true" class="badge badge-danger">Name - required field</span>
-                    </div>
-                <input type="text" formControlName="name" class="form-control" placeholder="Name" required>
-              </label>
-              </div>
-            <div class="form-group">
-              <label>Password:
-                  <div *ngIf="form.controls.password1.errors">
-                      <span *ngIf="form.controls.password1.errors.minlength" class="badge badge-danger">Min length of password {{passwordLength}}</span>
-                      <span *ngIf="form.controls.password1.errors.required && form.controls.password1.dirty === true" class="badge badge-danger">Password - required field</span>
-                  </div>
-              <input type="password" formControlName="password1" class="form-control" placeholder="Password" required>
-            </label>
+        <input type="text" formControlName="name" class="form-control" placeholder="Name" required>
+        </label>
+        </div>
+    <div class="form-group">
+        <label>Password:
+            <div *ngIf="form.controls.password1.errors">
+                <span *ngIf="form.controls.password1.errors.minlength" class="badge badge-danger">Min length of password {{passwordLength}}</span>
+                <span *ngIf="form.controls.password1.errors.required && form.controls.password1.dirty === true" class="badge badge-danger">Password - required field</span>
             </div>
-            <div class="form-group">
-                <label>Confirm password:
-                    <div *ngIf="form.controls.password2.errors">
-                        <span *ngIf="form.controls.password2.errors.minlength" class="badge badge-danger">Min length of password {{passwordLength}}</span>
-                    </div>
-                <input type="password" formControlName="password2" class="form-control" placeholder="Confirm password" required>
-                </label>
+        <input type="password" formControlName="password1" class="form-control" placeholder="Password" required>
+    </label>
+    </div>
+    <div class="form-group">
+        <label>Confirm password:
+            <div *ngIf="form.controls.password2.errors">
+                <span *ngIf="form.controls.password2.errors.minlength" class="badge badge-danger">Min length of password {{passwordLength}}</span>
             </div>
-            <div class="form-group">
-                <button [disabled]="form.controls.email.errors || form.controls.name.errors || form.controls.password1.errors || form.controls.password2.errors" class="btn btn-lg btn-primary btn-block" type="submit" (click)="addUser(form)">Add user</button>
-            </div>
+        <input type="password" formControlName="password2" class="form-control" placeholder="Confirm password" required>
+        </label>
+    </div>
+    <div class="form-group">
+        <button [disabled]="form.controls.email.errors || form.controls.name.errors || form.controls.password1.errors || form.controls.password2.errors" class="btn btn-lg btn-primary btn-block" type="submit" (click)="addUser(form)">Add user</button>
+    </div>
 </form>
     

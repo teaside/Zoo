@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { AnimalService } from '../../shared/services/animal.service';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-// import { AnimalService } from '../shared/services/animal.service';
 
 @Component({
   selector: 'app-add-animal',
@@ -27,7 +26,7 @@ export class AddAnimalComponent implements OnInit {
     .subscribe(data => {
       console.log(data)
       this.preloader = false;
-      this.router.navigate(['/main']);
+      this.router.navigate(['/system', 'list']);
     });
   }
 

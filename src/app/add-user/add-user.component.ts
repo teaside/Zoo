@@ -58,14 +58,8 @@ export class AddUserComponent implements OnInit {
       });
     }
     else {
-      
-      // const asd = this.form.controls.email.errors.forbidden;
-      // console.log(asd);
-      // if (!this.form.controls.email.valid)
-      //   this.loginStatus = "User with this email is already registered"
-      // this.showError(this.form);
+
     }
-    
   }
 
   invalidField(email, form) {
@@ -95,18 +89,6 @@ export class AddUserComponent implements OnInit {
     });
   }
 
-  showError(form: FormGroup) {
-    console.log(form);
-    // let res;
-    // if(form.hasError('forbidden')) {
-    //   res.email.isExist = 'User with this email already exists';
-    // } else res.email.isExist = null;
-    // if(form.controls.email.valid) {
-    //   res.email.valid = 'User with this email already exists';
-    // } else res.email.valid = null;
-    // // if(form.controls.email.valid)
-    // console.log(res);
-  }
   back() {
     this.location.back();
   }
