@@ -2,11 +2,9 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { AnimalService } from '../../shared/services/animal.service';
 import { Animal } from '../../shared/models/animal.model';
 import { Router } from '@angular/router';
-import { FormsModule }   from '@angular/forms';
-import {Observable} from 'rxjs';
-import {DebounceDirective} from '../../shared/directives/debounce.directive';
 import { fromEvent, of } from 'rxjs';
-import { switchMap, map, filter, debounceTime, tap, switchAll } from 'rxjs/operators';
+import { map, debounceTime } from 'rxjs/operators';
+import { PagerService } from '../../shared/services/pager.service';
 
 @Component({
   selector: 'app-list',
@@ -16,14 +14,20 @@ import { switchMap, map, filter, debounceTime, tap, switchAll } from 'rxjs/opera
 export class ListComponent implements OnInit {
 
   @ViewChild('myInput') el:ElementRef;
-
   preloader = false;
-  
   animals: Animal[];
   show:boolean = false;//if animals-
+
+  private allItems: any[];
+  // pager object
+  pager: any = {};
+  // paged items
+  pagedItems: any[];
+
   constructor(
     private animalservice: AnimalService,
-    private router: Router
+    private router: Router,
+    private pagerService: PagerService
   ) { }
 
   ngOnInit() {
@@ -38,13 +42,26 @@ export class ListComponent implements OnInit {
         ); 
         obs.subscribe(() => this.search(this.el.nativeElement.value) );
   }
+
+  setPage(page: number) {
+    console.log(123);
+    // get pager object from service
+    this.pager = this.pagerService.getPager(this.allItems.length, page);
+    // get current page of items
+    console.log('page', page);
+    // console.log(' this.pager.endIndex + 1',  this.pager.endIndex + 1);
+    this.pagedItems = this.allItems.slice(this.pager.startIndex, this.pager.endIndex + 1);
+}
+
   getAnimals() {
     this.preloader = true;
     this.animalservice.getAnimals()
     .subscribe(data => {
-      this.animals = JSON.parse(data['_body']);
+      // this.animals = JSON.parse(data['_body']);
+      this.allItems = JSON.parse(data['_body']);
+      this.setPage(1);
       this.preloader = false;
-      this.show = this.animals.length > 0 ? false : true; 
+      // this.show = this.animals.length > 0 ? false : true; 
     });
   }
 

@@ -9,7 +9,7 @@ import { Location } from '@angular/common';
   styleUrls: ['./add-animal.component.css']
 })
 export class AddAnimalComponent implements OnInit {
-
+  allow = true;
   preloader = false;
 
   constructor(
@@ -20,14 +20,20 @@ export class AddAnimalComponent implements OnInit {
   ngOnInit() {
   }
 
-  addAnimal(name) {
-    this.preloader = true;
-    this.animalService.addAnimal(name)
-    .subscribe(data => {
-      console.log(data)
-      this.preloader = false;
-      this.router.navigate(['/system', 'list']);
-    });
+  addAnimal(name: string) {
+    if(name.trim().length > 0) {
+      this.allow = true;
+      this.preloader = true;
+      this.animalService.addAnimal(name)
+      .subscribe(data => {
+        console.log(data)
+        this.preloader = false;
+        this.router.navigate(['/system', 'list']);
+      });
+    }
+    else {
+      this.allow = false;
+    }
   }
 
   back() {

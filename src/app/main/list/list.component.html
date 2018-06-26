@@ -4,13 +4,33 @@
 <img *ngIf="preloader" class="custom_size" src="../assets/preloader.gif">
 
 <div *ngIf="!preloader">
-    <ul *ngFor="let animal of animals" class="list-group">
+    <!-- <ul *ngFor="let animal of animals" class="list-group">
         <div class="list-group-item">
             <a class="mt-4" [routerLink]="['/system', 'animal', animal._id]">
               {{animal.name}}
             </a>
             <button type="button" class="btn btn-danger float-right" (click)="delete(animal._id)">Delete</button>
         </div>
+      </ul> -->
+      <div *ngFor="let item of pagedItems">{{item.name}}</div>
+ 
+            <!-- pager -->
+      <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
+          <li clas="page-item">
+              <div class="page-link" (click)="setPage(1)">First</div>
+          </li>
+          <li clas="page-item">
+              <div class="page-link" (click)="setPage(pager.currentPage - 1)">Previous</div>
+          </li>
+          <li *ngFor="let page of pager.pages" clas="page-item">
+              <div class="page-link" (click)="setPage(page)">{{page}}</div>
+          </li>
+          <li clas="page-item">
+              <div class="page-link" (click)="setPage(pager.currentPage + 1)">Next</div>
+          </li>
+          <li clas="page-item">
+              <div class="page-link" (click)="setPage(pager.totalPages)">Last</div>
+          </li>
       </ul>
 </div>
 <div *ngIf="show">

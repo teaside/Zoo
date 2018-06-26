@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { AnimalService } from '../shared/services/animal.service';
-import { Animal } from '../shared/models/animal.model';
 import { UserService } from '../shared/services/user.service';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { fromEvent, of } from 'rxjs';
+import { map, debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-add-user',
@@ -14,6 +14,8 @@ import { Router } from '@angular/router';
 export class AddUserComponent implements OnInit {
   loginStatus = '';
   passwordStatus = '';
+
+  @ViewChild('emailInput') el:ElementRef;
 
   form: FormGroup;
   passwordLength:number = 6;
@@ -36,6 +38,10 @@ export class AddUserComponent implements OnInit {
       password1: ['', [Validators.required, Validators.minLength(this.passwordLength)]],
       password2: ['', [Validators.required, Validators.minLength(this.passwordLength)], this.isSamePasswords.bind(this)]
     });
+    this.form.valueChanges
+    .pipe(
+      debounceTime(500)
+    );
   }
 
   ngOnInit() {
@@ -87,6 +93,7 @@ export class AddUserComponent implements OnInit {
           }
         });
     });
+
   }
 
   back() {

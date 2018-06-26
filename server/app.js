@@ -134,8 +134,7 @@ app.route('/user')
                         { 
                             'email': req.body.email,
                             'name': req.body.name,
-                            'password': req.body.password,
-                            'animals': []
+                            'password': req.body.password
                     },
                     function (err, r) {
                         assert.equal(null, err);
@@ -243,7 +242,6 @@ app.route('/animals/:id')
             }
         })
     })
-
     .put(ensureToken, (req, res) => {
             jwt.verify(req.token, 'my_secret_key', (err, data) => {
                 if (err) {
@@ -315,39 +313,65 @@ app.route('/animals/:id')
         }
     )
     
-    app.get('/animalsSearch/:substr/:userId', ensureToken, (req, res) => {
-      jwt.verify(req.token, 'my_secret_key', (err, data) => {
-          if (err) {
-              res.sendStatus(403);
-          } else {
-              mongoClient.connect('mongodb://localhost:27017', function(err, client) {
-                  assert.equal(null, err);
-                  console.log('searching...')
-                  const db = client.db('pets');
-                  const col =  db.collection("animals");
+app.get('/animalsSearch/:substr/:userId', ensureToken, (req, res) => {
+    jwt.verify(req.token, 'my_secret_key', (err, data) => {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            mongoClient.connect('mongodb://localhost:27017', function(err, client) {
+                assert.equal(null, err);
+                console.log('searching...')
+                const db = client.db('pets');
+                const col =  db.collection("animals");
 
-                  let query = {userId: req.params.userId};
-                  console.log(Date.now);
-                  console.log('query1', req.params.substr);
-                  if(req.params.substr != ''){
-                      console.log('pew');
+                let query = {userId: req.params.userId};
+
+                console.log(Date.now);
+                console.log('query1', req.params.substr);
+                if(req.params.substr != ''){
+                    console.log('pew');
                     query = {name: new RegExp(req.params.substr, 'i'), userId: req.params.userId};
-                  }
-                  console.log('query2', req.params.substr);
-                console.log(query);
-                col.find(query).toArray(function(err, results) {
-                    if (err) {
-                        res.json({'users': "db don't has users "});
-                    } else {
-                        console.log(results);
-                        res.json(results);
-                    }
-                    });
-              });
-              
-          }
-      })
+                }
+                console.log('query2', req.params.substr);
+            console.log(query);
+            col.find(query).toArray(function(err, results) {
+                if (err) {
+                    res.json({'users': "db don't has users "});
+                } else {
+                    console.log(results);
+                    res.json(results);
+                }
+                });
+            });
+            
+        }
     })
+})
+
+app.get('/search/:page', ensureToken, function  (req, res) {
+    jwt.verify(req.token, 'my_secret_key', (err, data) => {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            const perPage = 10;
+            const page = req.params.page || 1;
+            mongoClient.connect('mongodb://localhost:27017', function(err, client) {
+                assert.equal(null, err);
+                console.log('searching...')
+                const db = client.db('pets');
+                const col =  db.collection("animals");
+
+                col.find({}, {skip: (perPage*page)-perPage, limit: perPage}).toArray((err, res) => {
+                    if(err == null) {
+                        console.log(err);
+                    } else {
+                        console.log('pagination result ',res);
+                    }
+                });
+            });
+        }
+    })
+});
 
 app.use(errorHandler);
 
