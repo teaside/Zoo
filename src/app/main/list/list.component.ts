@@ -17,7 +17,7 @@ export class ListComponent implements OnInit {
   preloader = false;
   animals: Animal[];
   show:boolean = false;//if animals-
-
+  itemsCount = 0;
   private allItems: any[];
   // pager object
   pager: any = {};
@@ -31,26 +31,47 @@ export class ListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.getAnimals();
-
+    this.animalservice.getPagesCount(10)
+      .subscribe(data => {
+        console.log('getPagesCount', data['_body']);
+        this.itemsCount = data['_body'];
+        this.animalservice.getPage(1, 10)
+          .subscribe(data2 => {
+            this.allItems = JSON.parse(data2['_body']);
+            console.log('this.allItems', this.allItems);
+            // console.log('animals', data2['_body']);
+            this.setPage(1);
+          });
+      });
+    // this.getAnimals();
     const obs = fromEvent(this.el.nativeElement, 'keyup')
     .pipe (
         map((e:any) => {
           return e.target.value;
         }), 
         debounceTime(500),
-        ); 
-        obs.subscribe(() => this.search(this.el.nativeElement.value) );
+    ); 
+    obs.subscribe(() => this.search(this.el.nativeElement.value) );
   }
 
   setPage(page: number) {
-    console.log(123);
-    // get pager object from service
-    this.pager = this.pagerService.getPager(this.allItems.length, page);
-    // get current page of items
-    console.log('page', page);
-    // console.log(' this.pager.endIndex + 1',  this.pager.endIndex + 1);
-    this.pagedItems = this.allItems.slice(this.pager.startIndex, this.pager.endIndex + 1);
+    console.log('123',page);
+    console.log('this.itemsCount',this.itemsCount);
+    
+    this.pager = this.pagerService.getPager(this.itemsCount, page);
+
+    console.log('this.pager.startIndex', this.pager.startIndex);
+    console.log('this.pager.endIndex', this.pager.endIndex + 1)
+    // console.log('(this.pager.endIndex + 1 - this.pager.startIndex) / 10', (this.pager.endIndex + 1 - this.pager.startIndex) / 10);
+    // this.animalservice.getPage((this.pager.endIndex + 1 - this.pager.startIndex) / 10, 10)
+    this.animalservice.getPage(page, 10)
+    .subscribe(data => {
+      this.allItems = JSON.parse(data['_body']);
+      // console.log('this.allItems', this.allItems);
+      this.pagedItems = this.allItems;
+    });
+
+    
 }
 
   getAnimals() {
@@ -84,7 +105,6 @@ export class ListComponent implements OnInit {
       this.preloader = false;
       this.show = this.animals.length > 0 ? false : true; 
     });
-
   }
 
 }

@@ -68,8 +68,6 @@ export class AnimalService implements OnInit {
   }
 
   search(substr: string) {
-    // console.log('substr',substr);
-    
     let header = new Headers();
     header.append('Content-Type', 'application/json');
     header.append("Authorization", "Bearer " + this.authService.getToken());
@@ -78,5 +76,23 @@ export class AnimalService implements OnInit {
       return this.http.get(`${environment.apiUrl}/${this.authService.getuserId()}/animals`, requestOptions);
     }
     return this.http.get(`${environment.apiUrl}/animalsSearch/${substr}/${this.authService.getuserId()}`, requestOptions);
+  }
+
+  getPage(page: number = 1, count: number = 10) {
+    let header = new Headers();
+    header.append('Content-Type', 'application/json');
+    header.append("Authorization", "Bearer " + this.authService.getToken());
+    let requestOptions = new RequestOptions({headers: header, params: new URLSearchParams} );
+    return this.http.get(`${environment.apiUrl}/pagination/${this.authService.getuserId()}/${page}/${count}`, requestOptions);
+  }
+
+  getPagesCount(count: number = 10) {
+    // console.log('page ', page);
+    // console.log('count ', count);
+    let header = new Headers();
+    header.append('Content-Type', 'application/json');
+    header.append("Authorization", "Bearer " + this.authService.getToken());
+    let requestOptions = new RequestOptions({headers: header, params: new URLSearchParams} );
+    return this.http.get(`${environment.apiUrl}/paginationCount/${this.authService.getuserId()}/${count}`, requestOptions);
   }
 }

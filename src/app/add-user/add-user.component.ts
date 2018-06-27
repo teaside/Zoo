@@ -45,7 +45,7 @@ export class AddUserComponent implements OnInit {
   }
 
   ngOnInit() {
-    window['aaa'] = this;
+    // window['aaa'] = this;
   }
 
   addUser(form: FormGroup) {

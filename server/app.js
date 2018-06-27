@@ -115,7 +115,7 @@ app.route('/user')
                     } else {
                         res.json(results);
                     }
-                  });
+                });
             });
             
         }
@@ -166,7 +166,7 @@ app.route('/:userId/animals')
                     if (err) {
                         res.json([{'animals': "db don't has animals "}]);
                     } else {
-                        console.log(results);
+                        // console.log(results);
                         res.json(results);
                     }
                   });
@@ -333,8 +333,8 @@ app.get('/animalsSearch/:substr/:userId', ensureToken, (req, res) => {
                     query = {name: new RegExp(req.params.substr, 'i'), userId: req.params.userId};
                 }
                 console.log('query2', req.params.substr);
-            console.log(query);
-            col.find(query).toArray(function(err, results) {
+                console.log(query);
+                col.find(query).toArray(function(err, results) {
                 if (err) {
                     res.json({'users': "db don't has users "});
                 } else {
@@ -346,26 +346,62 @@ app.get('/animalsSearch/:substr/:userId', ensureToken, (req, res) => {
             
         }
     })
-})
+});
 
-app.get('/search/:page', ensureToken, function  (req, res) {
+app.get('/paginationCount/:userId/:perPage', ensureToken, function (req, res) {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
         if (err) {
             res.sendStatus(403);
         } else {
-            const perPage = 10;
-            const page = req.params.page || 1;
+            const perPage = req.params.perPage || 10;
+            console.log('perPage', perPage);
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
                 assert.equal(null, err);
-                console.log('searching...')
+                console.log('Pages count...')
                 const db = client.db('pets');
                 const col =  db.collection("animals");
-
-                col.find({}, {skip: (perPage*page)-perPage, limit: perPage}).toArray((err, res) => {
-                    if(err == null) {
+                col.find({userId: req.params.userId}).count(function(err, results) {
+                    if (err) {
                         console.log(err);
+                        res.sendStatus(403);
                     } else {
-                        console.log('pagination result ',res);
+                        
+                        console.log("count of page ", Math.trunc(results / perPage) );
+                        // const pageCount = Math.trunc(results / perPage);
+                        const pageCount = results;
+                        // console.log(typeof(pageCount));
+                        res.send(pageCount + '');
+                        console.log('ok')
+                    }
+                });
+            });
+        }
+    })
+});
+
+app.get('/pagination/:userId/:page/:count', ensureToken, function  (req, res) {
+    jwt.verify(req.token, 'my_secret_key', (err, data) => {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            const perPage = req.params.count || 1;
+            const page = req.params.page || 1;
+            console.log('perPage', perPage);
+            console.log('page', page);
+            mongoClient.connect('mongodb://localhost:27017', function(err, client) {
+                assert.equal(null, err);
+                console.log('paging...')
+                const db = client.db('pets');
+                const col =  db.collection("animals");
+                console.log('perPage', typeof(perPage));
+                col.find({userId: req.params.userId}, {skip: (perPage*page)-perPage, limit: +perPage}).toArray(function(err, results) {
+                    if (err) {
+                        res.send(403);
+                    } else {
+                        
+                        console.log(results);
+                        res.json(results);
+                        console.log('ok')
                     }
                 });
             });
