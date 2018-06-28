@@ -18,6 +18,7 @@ export class ListComponent implements OnInit {
   animals: Animal[];
   show:boolean = false;//if animals-
   itemsCount = 0;
+  lastSearch = '';
   private allItems: any[];
   // pager object
   pager: any = {};
@@ -31,6 +32,7 @@ export class ListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.preloader = true;
     this.animalservice.getPagesCount(10)
       .subscribe(data => {
         console.log('getPagesCount', data['_body']);
@@ -51,25 +53,40 @@ export class ListComponent implements OnInit {
         }), 
         debounceTime(500),
     ); 
-    obs.subscribe(() => this.search(this.el.nativeElement.value) );
+    obs.subscribe(() => this.search(this.el.nativeElement.value,  this.pager.startIndex,  this.pager.endIndex) );
   }
 
   setPage(page: number) {
-    console.log('123',page);
-    console.log('this.itemsCount',this.itemsCount);
-    
+    this.preloader = true;
     this.pager = this.pagerService.getPager(this.itemsCount, page);
 
     console.log('this.pager.startIndex', this.pager.startIndex);
-    console.log('this.pager.endIndex', this.pager.endIndex + 1)
-    // console.log('(this.pager.endIndex + 1 - this.pager.startIndex) / 10', (this.pager.endIndex + 1 - this.pager.startIndex) / 10);
+    console.log('this.pager.endIndex', this.pager.endIndex)
+    // console.log('(this.pager.startIndex', this.pager.startIndex);
     // this.animalservice.getPage((this.pager.endIndex + 1 - this.pager.startIndex) / 10, 10)
-    this.animalservice.getPage(page, 10)
+  if(this.el.nativeElement.value === '')
+  {
+    //если первый раз вызываем после поиска, то устанавливаем на первую страницу
+    this.lastSearch = "";
+    //вызываем поиск передаем старт(current) и енд(current+10) с сабстр но без параметров
+    this.animalservice.getPage(this.pager.startIndex, this.pager.endIndex + 1)
     .subscribe(data => {
       this.allItems = JSON.parse(data['_body']);
       // console.log('this.allItems', this.allItems);
       this.pagedItems = this.allItems;
+      this.preloader = false;
     });
+  }
+  else {
+    if (this.lastSearch !== this.el.nativeElement.value) {
+        //переустанавливаем падинг
+        //вызываем поиск передаем старт(1) и енд(10) с сабстр и устанавливаем первую страницу
+
+      } else {
+        //вызываем и передаем старт(current) и енд(current+10) с сабстр
+    }
+  }
+    
 
     
 }
@@ -92,13 +109,14 @@ export class ListComponent implements OnInit {
     this.animalservice.deleteAnimal(id)
     .subscribe(data => {
       console.log(data);
-      this.getAnimals();
+      // this.getAnimals();
     });
   }
 
-  search(substr) {
+  search(substr, startIndex, endIndex) {
+     this.el.nativeElement.value
     this.preloader = true;
-    this.animalservice.search(substr)
+    this.animalservice.search(substr, 10)
     .subscribe(data => {
       console.log(data);
       this.animals = JSON.parse(data['_body']);

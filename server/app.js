@@ -68,6 +68,7 @@ app.post('/login', (req, res) => {
 app.get('/', ensureToken, function  (req, res) {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
         if (err) {
+            console.log(err);
             res.sendStatus(403);
         } else {
             res.json({
@@ -102,6 +103,7 @@ app.route('/user')
   .get(ensureToken, (req, res) => {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
         if (err) {
+            console.log(err);
             res.sendStatus(403);
         } else {
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
@@ -111,6 +113,7 @@ app.route('/user')
         
                 db.collection("users").find().toArray(function(err, results) {
                     if (err) {
+                        console.log(err);
                         res.json({'users': "db don't has users "});
                     } else {
                         res.json(results);
@@ -154,6 +157,7 @@ app.route('/:userId/animals')
     console.log('getting animals for user');
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
         if (err) {
+            console.log(err);
             res.sendStatus(403);
         } else {
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
@@ -164,6 +168,7 @@ app.route('/:userId/animals')
         
                 db.collection("animals").find({userId: req.params.userId}).toArray(function(err, results) {
                     if (err) {
+                        console.log(err);
                         res.json([{'animals': "db don't has animals "}]);
                     } else {
                         // console.log(results);
@@ -202,6 +207,7 @@ app.route('/:userId/animals')
   app.get('/animal/:id/:userId', ensureToken, function  (req, res) {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
         if (err) {
+            console.log(err);
             res.sendStatus(403);
         } else {
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
@@ -211,6 +217,7 @@ app.route('/:userId/animals')
                 const db = client.db('pets');          
                 db.collection("animals").find({_id: ObjectId(req.params.id), userId: req.params.userId}).toArray(function(err, results) {
                     if (err) {
+                        console.log(err);
                     } else {
                         console.log(results[0]);
                         res.json(results[0]);
@@ -225,6 +232,7 @@ app.route('/animals/:id')
     .get(ensureToken, (req, res) => {
         jwt.verify(req.token, 'my_secret_key', (err, data) => {
             if (err) {
+                console.log(err);
                 res.sendStatus(403);
             } else {
                 mongoClient.connect('mongodb://localhost:27017', function(err, client) {
@@ -233,6 +241,7 @@ app.route('/animals/:id')
                     const db = client.db('pets');          
                     db.collection("animals").find({_id: ObjectId(req.params.id)}).toArray(function(err, results) {
                         if (err) {
+                            console.log(err);
                         } else {
                             console.log(results[0]);
                             res.json(results[0]);
@@ -245,6 +254,7 @@ app.route('/animals/:id')
     .put(ensureToken, (req, res) => {
             jwt.verify(req.token, 'my_secret_key', (err, data) => {
                 if (err) {
+                    console.log(err);
                     res.sendStatus(403);
                 } 
                 else {
@@ -262,7 +272,7 @@ app.route('/animals/:id')
                             { $set: 
                                 { name: req.body.name }
                             }, function(err, result){   
-                                if(err != null)
+                                if(err)
                                 {
                                     console.log(err);
                                     res.status(500);
@@ -281,6 +291,7 @@ app.route('/animals/:id')
     .delete(ensureToken, (req, res) => {
             jwt.verify(req.token, 'my_secret_key', (err, data) => {
                 if (err) {
+                    console.log(err);
                     res.sendStatus(403);
                 } else {
                     if(typeof req.body == 'undefined') {
@@ -313,11 +324,13 @@ app.route('/animals/:id')
         }
     )
     
-app.get('/animalsSearch/:substr/:userId', ensureToken, (req, res) => {
+app.post('/animalsSearch/:userId', ensureToken, (req, res) => {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
         if (err) {
+            console.log(err);
             res.sendStatus(403);
         } else {
+            console.log('body', req.body)
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
                 assert.equal(null, err);
                 console.log('searching...')
@@ -326,16 +339,19 @@ app.get('/animalsSearch/:substr/:userId', ensureToken, (req, res) => {
 
                 let query = {userId: req.params.userId};
 
-                console.log(Date.now);
-                console.log('query1', req.params.substr);
-                if(req.params.substr != ''){
+                console.log('substr', req.body.substr);
+                console.log('startindex', typeof(req.body.startIndex));
+                console.log('endindex', typeof(req.body.endIndex));
+                console.log('userId', typeof(req.params.userId));
+                if(req.params.substr != '') {
                     console.log('pew');
-                    query = {name: new RegExp(req.params.substr, 'i'), userId: req.params.userId};
+                    // query = {name: new RegExp(req.body.substr, 'i'), userId: req.params.userId, { skip: req.body.startIndex, limit: req.body.endIndex-req.body.startIndex}};
                 }
                 console.log('query2', req.params.substr);
-                console.log(query);
-                col.find(query).toArray(function(err, results) {
+                // console.log({name: new RegExp(req.body.substr, 'i')}, {userId: req.params.userId, skip: req.body.startIndex, limit: });
+                col.find({name: new RegExp(req.body.substr, 'i')}, {userId: req.params.userId}).skip(+req.body.startIndex).limit(req.body.endIndex-req.body.startIndex).toArray(function(err, results) {
                 if (err) {
+                    console.log(err);
                     res.json({'users': "db don't has users "});
                 } else {
                     console.log(results);
@@ -351,13 +367,14 @@ app.get('/animalsSearch/:substr/:userId', ensureToken, (req, res) => {
 app.get('/paginationCount/:userId/:perPage', ensureToken, function (req, res) {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
         if (err) {
+            console.log(err);
             res.sendStatus(403);
         } else {
             const perPage = req.params.perPage || 10;
             console.log('perPage', perPage);
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
                 assert.equal(null, err);
-                console.log('Pages count...')
+                console.log('Pages count...');
                 const db = client.db('pets');
                 const col =  db.collection("animals");
                 col.find({userId: req.params.userId}).count(function(err, results) {
@@ -379,29 +396,27 @@ app.get('/paginationCount/:userId/:perPage', ensureToken, function (req, res) {
     })
 });
 
-app.get('/pagination/:userId/:page/:count', ensureToken, function  (req, res) {
+app.get('/pagination/:userId/:startIndex/:endIndex', ensureToken, function  (req, res) {
     jwt.verify(req.token, 'my_secret_key', (err, data) => {
         if (err) {
+            console.log(err);
             res.sendStatus(403);
         } else {
-            const perPage = req.params.count || 1;
-            const page = req.params.page || 1;
-            console.log('perPage', perPage);
-            console.log('page', page);
+            console.log('startIndex', req.params.startIndex);
+            console.log('endIndex', req.params.endIndex);
             mongoClient.connect('mongodb://localhost:27017', function(err, client) {
                 assert.equal(null, err);
-                console.log('paging...')
+                console.log('pagination...');
                 const db = client.db('pets');
                 const col =  db.collection("animals");
-                console.log('perPage', typeof(perPage));
-                col.find({userId: req.params.userId}, {skip: (perPage*page)-perPage, limit: +perPage}).toArray(function(err, results) {
+                col.find({userId: req.params.userId}, {skip: +req.params.startIndex, limit: req.params.endIndex-req.params.startIndex}).toArray(function(err, results) {
                     if (err) {
+                        console.log(err);
                         res.send(403);
                     } else {
-                        
                         console.log(results);
                         res.json(results);
-                        console.log('ok')
+                        console.log('ok');
                     }
                 });
             });

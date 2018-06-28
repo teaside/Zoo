@@ -67,23 +67,30 @@ export class AnimalService implements OnInit {
       return this.http.delete(`${environment.apiUrl}/animals/${id}`, requestOptions);
   }
 
-  search(substr: string) {
+  search(substr: string, perPage: number = 10) {
+    
+    // let header = new Headers();
+    // header.append('Content-Type', 'application/json');
+    // header.append("Authorization", "Bearer " + this.authService.getToken());
+    // let requestOptions = new RequestOptions({headers: header, params: new URLSearchParams} );
+    // if(substr == '') {
+    //   return this.http.get(`${environment.apiUrl}/${this.authService.getuserId()}/animals`, requestOptions);
+    // }
+    // return this.http.get(`${environment.apiUrl}/animalsSearch/${substr}/${this.authService.getuserId()}`, requestOptions);
+    const find = {perPage: perPage, substr: substr};
     let header = new Headers();
     header.append('Content-Type', 'application/json');
     header.append("Authorization", "Bearer " + this.authService.getToken());
     let requestOptions = new RequestOptions({headers: header, params: new URLSearchParams} );
-    if(substr == '') {
-      return this.http.get(`${environment.apiUrl}/${this.authService.getuserId()}/animals`, requestOptions);
-    }
-    return this.http.get(`${environment.apiUrl}/animalsSearch/${substr}/${this.authService.getuserId()}`, requestOptions);
+    return this.http.post(`${environment.apiUrl}/animalsSearch/${this.authService.getuserId()}`, JSON.stringify(find), requestOptions);
   }
 
-  getPage(page: number = 1, count: number = 10) {
+  getPage(startIndex: number = 1, endIndex: number = 10) {
     let header = new Headers();
     header.append('Content-Type', 'application/json');
     header.append("Authorization", "Bearer " + this.authService.getToken());
     let requestOptions = new RequestOptions({headers: header, params: new URLSearchParams} );
-    return this.http.get(`${environment.apiUrl}/pagination/${this.authService.getuserId()}/${page}/${count}`, requestOptions);
+    return this.http.get(`${environment.apiUrl}/pagination/${this.authService.getuserId()}/${startIndex}/${endIndex}`, requestOptions);
   }
 
   getPagesCount(count: number = 10) {

@@ -4,29 +4,29 @@
 <img *ngIf="preloader" class="custom_size" src="../assets/preloader.gif">
 
 <div *ngIf="!preloader">
-    <!-- <ul *ngFor="let animal of animals" class="list-group">
+    <ul *ngFor="let animal of pagedItems" class="list-group clearfix mb-2">
         <div class="list-group-item">
-            <a class="mt-4" [routerLink]="['/system', 'animal', animal._id]">
+            <a class="" [routerLink]="['/system', 'animal', animal._id]">
               {{animal.name}}
             </a>
             <button type="button" class="btn btn-danger float-right" (click)="delete(animal._id)">Delete</button>
         </div>
-      </ul> -->
-      <div *ngFor="let item of pagedItems">{{item.name}}</div>
- 
+      </ul>
+      <!-- <div *ngFor="let item of pagedItems">{{item.name}}</div> -->
+      <!-- <div class="clearfix mt-2 mb-2"></div> -->
             <!-- pager -->
       <ul *ngIf="pager.pages && pager.pages.length" class="pagination">
           <li clas="page-item">
               <div class="page-link" (click)="setPage(1)">First</div>
           </li>
-          <li clas="page-item">
-              <div class="page-link" (click)="setPage(pager.currentPage - 1)">Previous</div>
-          </li>
-          <li *ngFor="let page of pager.pages" clas="page-item">
+          <li class="page-item">
+            <button [disabled]="pager.currentPage === 1" class="page-link" (click)="setPage(pager.currentPage - 1)">Previous</button>
+        </li>
+          <li *ngFor="let page of pager.pages" class="page-item">
               <div class="page-link" (click)="setPage(page)">{{page}}</div>
           </li>
           <li clas="page-item">
-              <div class="page-link" (click)="setPage(pager.currentPage + 1)">Next</div>
+              <button [disabled]="pager.currentPage === pager.totalPages" class="page-link" (click)="setPage(pager.currentPage + 1)">Next</button>
           </li>
           <li clas="page-item">
               <div class="page-link" (click)="setPage(pager.totalPages)">Last</div>
